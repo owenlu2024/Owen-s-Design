@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Owen’s Design Portfolio</title>
+  <style>
+    :root {
+      --ink: #111111;
+      --muted: #6e6e73;
+      --soft: #f5f5f7;
+      --paper: #ffffff;
+      --line: #d2d2d7;
+      --orange: #ff6a00;
+      --wide: min(1680px, calc(100vw - 40px));
+      --text: min(980px, calc(100vw - 40px));
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.38;
+      letter-spacing: 0;
+    }
+
+    button, a { font: inherit; }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .accent { color: var(--orange); }
+
+    .ratio-colon {
+      display: inline-block;
+      margin: 0 0.035em;
+      color: var(--ink);
+      font-size: 0.82em;
+      line-height: 1;
+      transform: translateY(-0.04em);
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 60;
+      height: 3px;
+      background: transparent;
+    }
+
+    .progress i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--orange);
+    }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding: 16px max(20px, calc((100vw - var(--wide)) / 2));
+      background: rgba(251, 251, 253, 0.78);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      backdrop-filter: saturate(180%) blur(22px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .brand strong {
+      font-size: 17px;
+      font-weight: 650;
+    }
+
+    .brand span {
+      color: var(--orange);
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .nav {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      color: #3a3a3c;
+      font-size: 13px;
+    }
+
+    .nav::-webkit-scrollbar { display: none; }
+
+    .nav a {
+      white-space: nowrap;
+      transition: color 180ms ease;
+    }
+
+    .nav a:hover { color: var(--orange); }
+
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      padding-top: 62px;
+      background: #fff;
+    }
+
+    .hero-copy {
+      width: var(--wide);
+      margin: 0 auto;
+      padding: clamp(84px, 12vw, 172px) 0 clamp(46px, 6vw, 86px);
+      text-align: center;
+    }
+
+    .eyebrow,
+    .project-number,
+    .spec-label {
+      color: var(--orange);
+      font-size: 13px;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 1380px;
+      margin: 14px auto 24px;
+      font-size: clamp(58px, 8vw, 142px);
+      font-weight: 700;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 780px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: clamp(21px, 2.35vw, 38px);
+      font-weight: 600;
+      line-height: 1.13;
+    }
+
+    .hero-media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      min-height: 0;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      padding: clamp(16px, 2.4vw, 44px) 0;
+      border: 0;
+      appearance: none;
+      background: #fff;
+      opacity: 0;
+      transform: scale(1.018);
+      cursor: zoom-in;
+      pointer-events: none;
+      transition: opacity 900ms ease, transform 1600ms ease;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .overview {
+      width: min(1320px, calc(100vw - clamp(56px, 12vw, 240px)));
+      margin: 0 auto;
+      padding: clamp(56px, 8vw, 118px) 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      background: transparent;
+    }
+
+    .stat {
+      min-height: 240px;
+      padding: clamp(24px, 4vw, 54px);
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 22px;
+    }
+
+    .stat + .stat {
+      border-left: 1px solid var(--line);
+    }
+
+    .stat b {
+      font-size: clamp(54px, 7vw, 118px);
+      font-weight: 700;
+      line-height: 0.9;
+    }
+
+    .stat span {
+      max-width: 220px;
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .section-title {
+      width: var(--text);
+      margin: 0 auto;
+      padding: clamp(98px, 13vw, 188px) 0 clamp(42px, 7vw, 92px);
+      text-align: center;
+    }
+
+    .section-title h2 {
+      margin: 12px 0 18px;
+      font-size: clamp(48px, 7vw, 112px);
+      line-height: 0.98;
+      font-weight: 700;
+    }
+
+    .section-title p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: clamp(20px, 2.1vw, 32px);
+      line-height: 1.16;
+      font-weight: 600;
+    }
+
+    #work .section-title {
+      width: min(1680px, calc(100vw - clamp(32px, 4vw, 72px)));
+      min-height: min(900px, calc((100vw - clamp(32px, 4vw, 72px)) * 9 / 16));
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #work .section-title h2 {
+      max-width: 1360px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: clamp(68px, 8.4vw, 156px);
+    }
+
+    #work .section-title p {
+      max-width: 1050px;
+      font-size: clamp(24px, 2.8vw, 48px);
+    }
+
+    #motion .section-title {
+      width: min(1680px, calc(100vw - clamp(32px, 4vw, 72px)));
+      min-height: min(900px, calc((100vw - clamp(32px, 4vw, 72px)) * 9 / 16));
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #motion .section-title h2 {
+      max-width: 1360px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: clamp(68px, 8.4vw, 156px);
+    }
+
+    #motion .section-title p {
+      max-width: 1050px;
+      font-size: clamp(24px, 2.8vw, 48px);
+    }
+
+    .filter {
+      width: var(--wide);
+      margin: 0 auto clamp(48px, 7vw, 104px);
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      color: #424245;
+      font-size: 15px;
+    }
+
+    .filter button {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      transition: color 180ms ease;
+    }
+
+    .filter button:hover,
+    .filter button.active {
+      color: var(--orange);
+    }
+
+    .project {
+      padding: 0 0 clamp(112px, 14vw, 210px);
+      background: var(--paper);
+    }
+
+    .project-inner {
+      width: min(1440px, calc(100vw - clamp(96px, 16vw, 320px)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(36px, 4.4vw, 84px);
+      align-items: center;
+    }
+
+    .project:nth-of-type(even) .project-inner .project-copy {
+      order: 2;
+    }
+
+    .project:nth-of-type(even) .project-inner .gallery {
+      order: 1;
+    }
+
+    .project-copy {
+      max-width: none;
+    }
+
+    .project h3 {
+      margin: 12px 0 18px;
+      font-size: clamp(36px, 4.1vw, 68px);
+      line-height: 1.01;
+      font-weight: 700;
+    }
+
+    .project p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(18px, 1.55vw, 25px);
+      line-height: 1.2;
+      font-weight: 600;
+    }
+
+    .specs {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .spec {
+      min-height: 88px;
+      padding: 16px 18px;
+      background: var(--paper);
+    }
+
+    .spec-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 11px;
+    }
+
+    .spec strong {
+      display: block;
+      color: #1d1d1f;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+
+    .shot {
+      position: relative;
+      grid-column: span 6;
+      aspect-ratio: 16 / 9;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #fff;
+      cursor: zoom-in;
+      text-align: left;
+    }
+
+    .shot.wide { grid-column: span 12; }
+
+    .shot img,
+    .shot video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 900ms ease;
+    }
+
+    .shot:hover img,
+    .shot:hover video {
+      transform: scale(1.025);
+      filter: saturate(1.02) contrast(1.02);
+    }
+
+    .shot::after {
+      display: none;
+    }
+
+    .shot:hover::after {
+      display: none;
+    }
+
+    .motion-wrap {
+      width: min(1680px, calc(100vw - clamp(32px, 4vw, 72px)));
+      margin: 0 auto clamp(120px, 14vw, 220px);
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: clamp(14px, 1.2vw, 24px);
+      aspect-ratio: 16 / 9;
+      background: #fff;
+    }
+
+    .motion-wrap .shot {
+      grid-column: auto;
+      height: 100%;
+      aspect-ratio: auto;
+      padding: 0;
+      background: #fff;
+    }
+
+    .motion-side {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(14px, 1.2vw, 24px);
+      background: #fff;
+    }
+
+    .motion-wrap .shot video {
+      object-fit: cover;
+      background: #fff;
+      filter: brightness(1.035) contrast(1.04);
+    }
+
+    .motion-wrap .shot::after {
+      display: none;
+    }
+
+    .closing {
+      width: min(1680px, calc(100vw - clamp(32px, 4vw, 72px)));
+      min-height: min(900px, calc((100vw - clamp(32px, 4vw, 72px)) * 9 / 16));
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      background: var(--paper);
+      text-align: center;
+    }
+
+    .closing-inner {
+      max-width: 1500px;
+    }
+
+    .closing h2 {
+      margin: 0;
+      font-size: clamp(34px, 4.8vw, 82px);
+      line-height: 1;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .closing .accent {
+      color: var(--ink);
+    }
+
+    .closing p {
+      max-width: 680px;
+      margin: 28px auto 0;
+      color: var(--ink);
+      font-size: clamp(19px, 1.8vw, 28px);
+      font-weight: 600;
+      line-height: 1.18;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.92);
+    }
+
+    .lightbox.open { display: grid; }
+
+    .lightbox img,
+    .lightbox video {
+      max-width: calc(100vw - 160px);
+      max-height: 90svh;
+      background: #000;
+    }
+
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      z-index: 91;
+      width: 72px;
+      height: 96px;
+      display: grid;
+      place-items: center;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .lightbox-prev { left: 26px; }
+
+    .lightbox-next { right: 26px; }
+
+    .lightbox-nav::before,
+    .lightbox-nav::after {
+      content: "";
+      position: absolute;
+      width: 50px;
+      height: 3px;
+      background: var(--orange);
+      transform-origin: left center;
+    }
+
+    .lightbox-prev::before { transform: translate(-13px, 0) rotate(-45deg); }
+
+    .lightbox-prev::after { transform: translate(-13px, 0) rotate(45deg); }
+
+    .lightbox-next::before,
+    .lightbox-next::after {
+      transform-origin: right center;
+    }
+
+    .lightbox-next::before { transform: translate(13px, 0) rotate(45deg); }
+
+    .lightbox-next::after { transform: translate(13px, 0) rotate(-45deg); }
+
+    .lightbox-nav:disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .close-btn {
+      position: fixed;
+      right: 22px;
+      top: 22px;
+      z-index: 90;
+      width: 42px;
+      height: 42px;
+      display: none;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .lightbox.open + .close-btn { display: grid; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 760ms ease, transform 760ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .hero { padding-top: 104px; }
+
+      .overview,
+      .project-inner,
+      .motion-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .stat + .stat {
+        border-left: 0;
+        border-top: 0;
+      }
+
+      .project:nth-of-type(even) .project-inner .project-copy,
+      .project:nth-of-type(even) .project-inner .gallery {
+        order: initial;
+      }
+
+      .project-copy {
+        max-width: none;
+        text-align: center;
+      }
+
+      .specs {
+        max-width: 620px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .brand strong { font-size: 15px; }
+
+      .nav {
+        width: 100%;
+        gap: 18px;
+      }
+
+      .hero-copy {
+        padding-top: 68px;
+      }
+
+      .hero-media {
+        min-height: 0;
+      }
+
+      .overview,
+      .section-title,
+      .project-inner,
+      .filter,
+      .motion-wrap {
+        width: min(100vw - 24px, 1680px);
+      }
+
+      .stat {
+        min-height: 170px;
+      }
+
+      .specs {
+        grid-template-columns: 1fr;
+      }
+
+      .shot,
+      .shot.wide {
+        grid-column: span 12;
+      }
+
+      .lightbox img,
+      .lightbox video {
+        max-width: 92vw;
+      }
+
+      .lightbox-nav {
+        width: 44px;
+        height: 64px;
+      }
+
+      .lightbox-prev { left: 6px; }
+
+      .lightbox-next { right: 6px; }
+
+      .lightbox-nav::before,
+      .lightbox-nav::after {
+        width: 32px;
+        height: 3px;
+      }
+
+      .lightbox-prev::before { transform: translate(-8px, 0) rotate(-45deg); }
+
+      .lightbox-prev::after { transform: translate(-8px, 0) rotate(45deg); }
+
+      .closing h2 {
+        font-size: clamp(28px, 9vw, 42px);
+      }
+
+      .lightbox-next::before { transform: translate(8px, 0) rotate(45deg); }
+
+      .lightbox-next::after { transform: translate(8px, 0) rotate(-45deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><i></i></div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Back to top">
+      <strong>Owen’s Design</strong>
+      <span>+</span>
+    </a>
+    <nav class="nav" aria-label="Portfolio navigation">
+      <a href="#work">Work</a>
+      <a href="#motion">Motion</a>
+      <a href="#index">Call me</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy reveal">
+        <div class="eyebrow">01<span class="accent">+</span> Outdoor product design</div>
+        <h1>Quiet Objects For Outdoor Living.</h1>
+        <p class="lead">A focused portfolio of mosquito repellent lighting, portable outdoor devices, candle-inspired lamps, and atmospheric mist products.</p>
+      </div>
+
+      <div class="hero-media" aria-label="Featured work carousel">
+        <button class="hero-slide active" data-src="asset-001.jpg">
+          <img src="asset-001.jpg" alt="Waterproof retro mosquito lamp in a rainy garden setting">
+        </button>
+        <button class="hero-slide" data-src="asset-002.jpg">
+          <img src="asset-002.jpg" alt="Portable outdoor mosquito repellent lamp on rocks">
+        </button>
+        <button class="hero-slide" data-src="asset-003.jpg">
+          <img src="asset-003.jpg" alt="Portable outdoor lamp 2 main product rendering">
+        </button>
+        <button class="hero-slide" data-src="asset-004.jpg">
+          <img src="asset-004.jpg" alt="Candle mosquito repellent lamp top detail">
+        </button>
+        <button class="hero-slide" data-src="asset-005.jpg">
+          <img src="asset-005.jpg" alt="Candle mosquito lamp B main rendering">
+        </button>
+        <button class="hero-slide" data-src="asset-006.jpg">
+          <img src="asset-006.jpg" alt="Flame mist device main rendering">
+        </button>
+        <button class="hero-slide" data-src="asset-007.jpg">
+          <img src="asset-007.jpg" alt="Wall-mounted mosquito lamp main rendering">
+        </button>
+      </div>
+    </section>
+
+    <section class="overview reveal" aria-label="Portfolio overview">
+      <div class="stat">
+        <b>07<span class="accent">+</span></b>
+        <span>Product series organized into a single portfolio system.</span>
+      </div>
+      <div class="stat">
+        <b>100<span class="accent">+</span></b>
+        <span>Renderings, scenarios, details, and motion assets.</span>
+      </div>
+      <div class="stat">
+        <b>16<span class="ratio-colon">:</span>9</b>
+        <span>Image-first presentation format for review and exhibition.</span>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="section-title reveal">
+        <div class="eyebrow">02<span class="accent">+</span> Selected work</div>
+        <h2>Products first. Words second.</h2>
+        <p>Each project is edited with a simple rhythm: one defining image, a short design statement, then supporting views for form, detail, and use.</p>
+      </div>
+
+      <div class="filter reveal" role="group" aria-label="Filter projects">
+        <button class="active" data-filter="all">All</button>
+        <button data-filter="portable">Portable</button>
+        <button data-filter="candle">Candle</button>
+        <button data-filter="bug">Bug Zapper</button>
+        <button data-filter="flame">Flame</button>
+      </div>
+
+      <article class="project reveal" data-type="bug">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.01<span class="accent">+</span></div>
+            <h3>Waterproof Retro Mosquito Lamp</h3>
+            <p>A courtyard object that brings together a familiar lantern silhouette, transparent capture volume, and a clearly expressed UV light band.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Outdoor bug zapper</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Weatherproof use</strong></div>
+              <div class="spec"><span class="spec-label">Language</span><strong>Retro utility</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Environment" data-src="asset-008.jpg"><img src="asset-008.jpg" alt="Waterproof retro mosquito lamp on an outdoor table"></button>
+            <button class="shot" data-label="Product" data-src="asset-009.jpg"><img src="asset-009.jpg" alt="Waterproof retro mosquito lamp product rendering"></button>
+            <button class="shot" data-label="Interface" data-src="asset-010.jpg"><img src="asset-010.jpg" alt="Top interface detail"></button>
+            <button class="shot" data-label="Connection" data-src="asset-011.jpg"><img src="asset-011.jpg" alt="Charging port detail"></button>
+            <button class="shot" data-label="Daylight" data-src="asset-012.jpg"><img src="asset-012.jpg" alt="Daytime outdoor scene"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="portable">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.02<span class="accent">+</span></div>
+            <h3>Portable Outdoor Lamp A</h3>
+            <p>A slim handheld form with an exposed handle and compact lighting body for carrying, hanging, and tabletop placement.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Portable lamp</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Multi-scenario use</strong></div>
+              <div class="spec"><span class="spec-label">Detail</span><strong>Exposed handle</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Hero" data-src="asset-002.jpg"><img src="asset-002.jpg" alt="Portable outdoor lamp on rocks"></button>
+            <button class="shot" data-label="Family" data-src="asset-013.jpg"><img src="asset-013.jpg" alt="Portable outdoor lamp color variants"></button>
+            <button class="shot" data-label="Top detail" data-src="asset-014.jpg"><img src="asset-014.jpg" alt="Top detail rendering"></button>
+            <button class="shot" data-label="Handle" data-src="asset-015.jpg"><img src="asset-015.jpg" alt="Handle interface detail"></button>
+            <button class="shot" data-label="Tabletop" data-src="asset-016.jpg"><img src="asset-016.jpg" alt="Portable lamp on a table"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="portable">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.03<span class="accent">+</span></div>
+            <h3>Portable Outdoor Lamp 2</h3>
+            <p>A second handheld direction with compact proportions, simplified surfaces, and a clear relationship between grip, light source, and body.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Handheld lamp</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Compact structure</strong></div>
+              <div class="spec"><span class="spec-label">Use</span><strong>Outdoor carry</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Form" data-src="asset-003.jpg"><img src="asset-003.jpg" alt="Portable outdoor lamp 2 product rendering"></button>
+            <button class="shot" data-label="Angle" data-src="asset-017.jpg"><img src="asset-017.jpg" alt="Portable outdoor lamp 2 angle view"></button>
+            <button class="shot" data-label="Detail" data-src="asset-018.jpg"><img src="asset-018.jpg" alt="Portable outdoor lamp 2 detail view"></button>
+            <button class="shot" data-label="Set" data-src="asset-019.jpg"><img src="asset-019.jpg" alt="Portable outdoor lamp 2 set rendering"></button>
+            <button class="shot" data-label="Profile" data-src="asset-020.jpg"><img src="asset-020.jpg" alt="Portable outdoor lamp 2 profile rendering"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="candle">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.04<span class="accent">+</span></div>
+            <h3>Candle Mosquito Lamp A</h3>
+            <p>A soft outdoor tabletop object that combines a candle-like glow, cylindrical frame, removable core, and top ventilation detail.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Candle lamp</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Soft atmosphere</strong></div>
+              <div class="spec"><span class="spec-label">System</span><strong>Replaceable core</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Close-up" data-src="asset-004.jpg"><img src="asset-004.jpg" alt="Candle mosquito lamp top close-up"></button>
+            <button class="shot" data-label="Front" data-src="asset-021.jpg"><img src="asset-021.jpg" alt="Candle mosquito lamp front view"></button>
+            <button class="shot" data-label="Assembly" data-src="asset-022.jpg"><img src="asset-022.jpg" alt="Candle mosquito lamp exploded view"></button>
+            <button class="shot" data-label="Solar" data-src="asset-023.jpg"><img src="asset-023.jpg" alt="Solar panel module detail"></button>
+            <button class="shot" data-label="Dimension" data-src="asset-024.jpg"><img src="asset-024.jpg" alt="Candle mosquito lamp dimension rendering"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="candle">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.05<span class="accent">+</span></div>
+            <h3>Candle Mosquito Lamp B</h3>
+            <p>A refined variant that tightens the base, body proportion, and detail language into a more compact product family direction.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Candle lamp</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Series refinement</strong></div>
+              <div class="spec"><span class="spec-label">Language</span><strong>Calm geometry</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Hero" data-src="asset-005.jpg"><img src="asset-005.jpg" alt="Candle mosquito lamp B hero rendering"></button>
+            <button class="shot" data-label="Angle" data-src="asset-025.jpg"><img src="asset-025.jpg" alt="Candle mosquito lamp B angle view"></button>
+            <button class="shot" data-label="Detail" data-src="asset-026.jpg"><img src="asset-026.jpg" alt="Candle mosquito lamp B detail view"></button>
+            <button class="shot" data-label="Set" data-src="asset-027.jpg"><img src="asset-027.jpg" alt="Candle mosquito lamp B set view"></button>
+            <button class="shot" data-label="Structure" data-src="asset-028.jpg"><img src="asset-028.jpg" alt="Candle mosquito lamp B structure rendering"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="flame">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.06<span class="accent">+</span></div>
+            <h3>Flame Mist Device</h3>
+            <p>An atmospheric device exploring flame-like light, mist output, transparent components, and a compact tabletop body.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Mist device</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Light and vapor</strong></div>
+              <div class="spec"><span class="spec-label">Mood</span><strong>Warm atmosphere</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Scene" data-src="asset-006.jpg"><img src="asset-006.jpg" alt="Flame mist device scene rendering"></button>
+            <button class="shot" data-label="Form" data-src="asset-029.jpg"><img src="asset-029.jpg" alt="Flame mist device form rendering"></button>
+            <button class="shot" data-label="Detail" data-src="asset-030.jpg"><img src="asset-030.jpg" alt="Flame mist device detail rendering"></button>
+            <button class="shot" data-label="Use" data-src="asset-031.jpg"><img src="asset-031.jpg" alt="Flame mist device use scene"></button>
+            <button class="shot" data-label="Variant" data-src="asset-032.jpg"><img src="asset-032.jpg" alt="Flame mist device variant rendering"></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project reveal" data-type="bug">
+        <div class="project-inner">
+          <div class="project-copy">
+            <div class="project-number">03.07<span class="accent">+</span></div>
+            <h3>Wall-mounted Mosquito Control Device</h3>
+            <p>A slim wall-mounted direction for residential outdoor areas, balancing quiet front recognition with discreet insect-control function.</p>
+            <div class="specs">
+              <div class="spec"><span class="spec-label">Type</span><strong>Wall-mounted device</strong></div>
+              <div class="spec"><span class="spec-label">Focus</span><strong>Exterior mounting</strong></div>
+              <div class="spec"><span class="spec-label">Detail</span><strong>Slim housing</strong></div>
+            </div>
+          </div>
+          <div class="gallery">
+            <button class="shot wide" data-label="Hero" data-src="asset-007.jpg"><img src="asset-007.jpg" alt="Wall-mounted mosquito lamp hero rendering"></button>
+            <button class="shot" data-label="Angle" data-src="asset-033.jpg"><img src="asset-033.jpg" alt="Wall-mounted mosquito lamp angle view"></button>
+            <button class="shot" data-label="Detail" data-src="asset-034.jpg"><img src="asset-034.jpg" alt="Wall-mounted mosquito lamp detail view"></button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="motion">
+      <div class="section-title reveal">
+        <div class="eyebrow">04<span class="accent">+</span> Motion details</div>
+        <h2>Small movements make function visible.</h2>
+        <p>Motion assets are placed as quiet supporting evidence: useful for explaining assembly, interaction, and product behavior.</p>
+      </div>
+      <div class="motion-wrap reveal">
+        <button class="shot" data-label="Motion 01" data-src="asset-035.mp4" data-kind="video">
+          <video src="asset-035.mp4" muted loop playsinline autoplay></video>
+        </button>
+        <div class="motion-side">
+          <button class="shot" data-label="Motion 02" data-src="asset-036.mp4" data-kind="video">
+            <video src="asset-036.mp4" muted loop playsinline autoplay></video>
+          </button>
+          <button class="shot" data-label="Motion 03" data-src="asset-037.mp4" data-kind="video">
+            <video src="asset-037.mp4" muted loop playsinline autoplay></video>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="index" class="closing">
+      <div class="closing-inner reveal">
+        <h2>Let<span class="accent">'</span>s create something together<span class="accent">.</span></h2>
+        <p>Reach me here: 15168136518</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Media preview"></div>
+  <button class="close-btn" aria-label="Close preview">×</button>
+
+  <script>
+    const slides = [...document.querySelectorAll(".hero-slide")];
+    let slideIndex = 0;
+    setInterval(() => {
+      slides[slideIndex].classList.remove("active");
+      slideIndex = (slideIndex + 1) % slides.length;
+      slides[slideIndex].classList.add("active");
+    }, 4600);
+
+    const progress = document.querySelector(".progress i");
+    const updateProgress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = `${Math.max(0, window.scrollY / max) * 100}%`;
+    };
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+
+    const filters = document.querySelectorAll(".filter button");
+    const projects = document.querySelectorAll(".project");
+    filters.forEach((button) => {
+      button.addEventListener("click", () => {
+        filters.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        const filter = button.dataset.filter;
+        projects.forEach((project) => {
+          const show = filter === "all" || project.dataset.type === filter;
+          project.style.display = show ? "block" : "none";
+        });
+      });
+    });
+
+    const lightbox = document.querySelector(".lightbox");
+    const closeBtn = document.querySelector(".close-btn");
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
+
+    const getLightboxGroup = (button) => {
+      if (button.classList.contains("hero-slide")) {
+        return slides;
+      }
+
+      const motion = button.closest(".motion-wrap");
+      if (motion) {
+        return [...motion.querySelectorAll(".shot")];
+      }
+
+      const project = button.closest(".project");
+      if (project) {
+        return [...project.querySelectorAll(".shot")];
+      }
+
+      return [button];
+    };
+
+    const renderLightbox = () => {
+      const button = lightboxGroup[lightboxIndex];
+      const src = button.dataset.src;
+      const kind = button.dataset.kind || "image";
+      const canNavigate = lightboxGroup.length > 1;
+      lightbox.replaceChildren();
+      const media = document.createElement(kind === "video" ? "video" : "img");
+      media.src = src;
+      media.addEventListener("click", (event) => event.stopPropagation());
+      if (kind === "video") {
+        media.controls = true;
+        media.autoplay = true;
+        media.loop = true;
+        media.playsInline = true;
+      } else {
+        media.alt = button.querySelector("img")?.alt || "Portfolio image";
+      }
+      const prev = document.createElement("button");
+      prev.className = "lightbox-nav lightbox-prev";
+      prev.type = "button";
+      prev.setAttribute("aria-label", "Previous image");
+      prev.disabled = !canNavigate;
+      prev.addEventListener("click", (event) => {
+        event.stopPropagation();
+        lightboxIndex = (lightboxIndex - 1 + lightboxGroup.length) % lightboxGroup.length;
+        renderLightbox();
+      });
+
+      const next = document.createElement("button");
+      next.className = "lightbox-nav lightbox-next";
+      next.type = "button";
+      next.setAttribute("aria-label", "Next image");
+      next.disabled = !canNavigate;
+      next.addEventListener("click", (event) => {
+        event.stopPropagation();
+        lightboxIndex = (lightboxIndex + 1) % lightboxGroup.length;
+        renderLightbox();
+      });
+
+      lightbox.append(prev, media, next);
+    };
+
+    const openLightbox = (button) => {
+      lightboxGroup = getLightboxGroup(button);
+      lightboxIndex = Math.max(0, lightboxGroup.indexOf(button));
+      renderLightbox();
+      lightbox.classList.add("open");
+    };
+
+    document.querySelectorAll(".shot, .hero-slide").forEach((button) => {
+      button.addEventListener("click", () => openLightbox(button));
+    });
+
+    const closeLightbox = () => {
+      lightbox.classList.remove("open");
+      lightbox.replaceChildren();
+      lightboxGroup = [];
+      lightboxIndex = 0;
+    };
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+    closeBtn.addEventListener("click", closeLightbox);
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLightbox();
+      if (!lightbox.classList.contains("open") || lightboxGroup.length < 2) return;
+      if (event.key === "ArrowLeft") {
+        lightboxIndex = (lightboxIndex - 1 + lightboxGroup.length) % lightboxGroup.length;
+        renderLightbox();
+      }
+      if (event.key === "ArrowRight") {
+        lightboxIndex = (lightboxIndex + 1) % lightboxGroup.length;
+        renderLightbox();
+      }
+    });
+  </script>
+</body>
+</html>
