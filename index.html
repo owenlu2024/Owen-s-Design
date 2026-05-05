@@ -14,6 +14,11 @@
       --orange: #ff6a00;
       --wide: min(1680px, calc(100vw - 40px));
       --text: min(980px, calc(100vw - 40px));
+      --hero-copy-x: 0px;
+      --hero-copy-y: 0px;
+      --hero-media-x: 0px;
+      --hero-media-y: 0px;
+      --hero-media-scale: 1;
     }
 
     * { box-sizing: border-box; }
@@ -30,6 +35,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
       line-height: 1.38;
       letter-spacing: 0;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
     }
 
     button, a { font: inherit; }
@@ -128,6 +137,7 @@
       margin: 0 auto;
       padding: clamp(84px, 12vw, 172px) 0 clamp(46px, 6vw, 86px);
       text-align: center;
+      will-change: transform;
     }
 
     .eyebrow,
@@ -190,6 +200,9 @@
       height: 100%;
       object-fit: contain;
       display: block;
+      transform: translate3d(var(--hero-media-x), var(--hero-media-y), 0) scale(var(--hero-media-scale));
+      transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      will-change: transform;
     }
 
     .overview {
@@ -301,12 +314,29 @@
     .filter {
       width: var(--wide);
       margin: 0 auto clamp(48px, 7vw, 104px);
+      position: relative;
       display: flex;
       justify-content: center;
       gap: 28px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
       color: #424245;
       font-size: 15px;
+    }
+
+    .filter::-webkit-scrollbar { display: none; }
+
+    .filter-indicator {
+      position: absolute;
+      left: 0;
+      bottom: -12px;
+      width: 0;
+      height: 2px;
+      background: var(--orange);
+      transform: translateX(0);
+      transition: transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1), width 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      pointer-events: none;
     }
 
     .filter button {
@@ -326,6 +356,7 @@
     .project {
       padding: 0 0 clamp(112px, 14vw, 210px);
       background: var(--paper);
+      transition: opacity 260ms ease, transform 260ms ease;
     }
 
     .project-inner {
@@ -348,6 +379,38 @@
     .project-copy {
       max-width: none;
     }
+
+    .project .project-number,
+    .project h3,
+    .project p,
+    .project .spec,
+    .project .shot {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 720ms ease, transform 720ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: var(--item-delay, 0ms);
+    }
+
+    .project.visible .project-number,
+    .project.visible h3,
+    .project.visible p,
+    .project.visible .spec,
+    .project.visible .shot {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .project .project-number { --item-delay: 40ms; }
+    .project h3 { --item-delay: 120ms; }
+    .project p { --item-delay: 190ms; }
+    .project .spec:nth-child(1) { --item-delay: 260ms; }
+    .project .spec:nth-child(2) { --item-delay: 320ms; }
+    .project .spec:nth-child(3) { --item-delay: 380ms; }
+    .project .shot:nth-child(1) { --item-delay: 180ms; }
+    .project .shot:nth-child(2) { --item-delay: 250ms; }
+    .project .shot:nth-child(3) { --item-delay: 320ms; }
+    .project .shot:nth-child(4) { --item-delay: 390ms; }
+    .project .shot:nth-child(5) { --item-delay: 460ms; }
 
     .project h3 {
       margin: 12px 0 18px;
@@ -411,6 +474,7 @@
       background: #fff;
       cursor: zoom-in;
       text-align: left;
+      isolation: isolate;
     }
 
     .shot.wide { grid-column: span 12; }
@@ -430,6 +494,24 @@
       filter: saturate(1.02) contrast(1.02);
     }
 
+    .shot::before {
+      content: "";
+      position: absolute;
+      inset: -35% -60%;
+      z-index: 1;
+      background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.46) 50%, transparent 65%);
+      transform: translateX(-65%) rotate(2deg);
+      opacity: 0;
+      transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 320ms ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .shot:hover::before {
+      opacity: 1;
+      transform: translateX(65%) rotate(2deg);
+    }
+
     .shot::after {
       display: none;
     }
@@ -446,6 +528,18 @@
       gap: clamp(14px, 1.2vw, 24px);
       aspect-ratio: 16 / 9;
       background: #fff;
+      transition: filter 620ms ease, opacity 620ms ease, transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .motion-wrap:not(.in-view) {
+      opacity: 0.72;
+      filter: saturate(0.88);
+    }
+
+    .motion-wrap.in-view {
+      opacity: 1;
+      filter: saturate(1.03) contrast(1.02);
+      transform: translateY(-4px);
     }
 
     .motion-wrap .shot {
@@ -467,6 +561,10 @@
       object-fit: cover;
       background: #fff;
       filter: brightness(1.035) contrast(1.04);
+    }
+
+    .motion-wrap.in-view .shot:first-child video {
+      transform: scale(1.018);
     }
 
     .motion-wrap .shot::after {
@@ -513,19 +611,39 @@
       position: fixed;
       inset: 0;
       z-index: 80;
-      display: none;
+      display: grid;
       place-items: center;
       padding: 24px;
-      background: rgba(0, 0, 0, 0.92);
+      background: rgba(0, 0, 0, 0.88);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      backdrop-filter: blur(0);
+      transition: opacity 260ms ease, visibility 260ms ease, backdrop-filter 360ms ease;
     }
 
-    .lightbox.open { display: grid; }
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      backdrop-filter: blur(18px);
+    }
 
     .lightbox img,
     .lightbox video {
       max-width: calc(100vw - 160px);
       max-height: 90svh;
       background: #000;
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+      animation: lightbox-media-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes lightbox-media-in {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .lightbox-nav {
@@ -603,6 +721,32 @@
     .reveal.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .hero-copy.reveal {
+      transform: translate3d(var(--hero-copy-x), calc(var(--hero-copy-y) + 26px), 0);
+    }
+
+    .hero-copy.reveal.visible {
+      transform: translate3d(var(--hero-copy-x), var(--hero-copy-y), 0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
+
+      :root {
+        --hero-copy-x: 0px;
+        --hero-copy-y: 0px;
+        --hero-media-x: 0px;
+        --hero-media-y: 0px;
+        --hero-media-scale: 1;
+      }
     }
 
     @media (max-width: 980px) {
@@ -988,6 +1132,7 @@
   <button class="close-btn" aria-label="Close preview">×</button>
 
   <script>
+    const root = document.documentElement;
     const slides = [...document.querySelectorAll(".hero-slide")];
     let slideIndex = 0;
     setInterval(() => {
@@ -995,6 +1140,48 @@
       slideIndex = (slideIndex + 1) % slides.length;
       slides[slideIndex].classList.add("active");
     }, 4600);
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hero = document.querySelector(".hero");
+    if (hero && !prefersReducedMotion) {
+      let pointerX = 0;
+      let pointerY = 0;
+      let scrollLift = 0;
+      let raf = 0;
+
+      const applyHeroMotion = () => {
+        raf = 0;
+        root.style.setProperty("--hero-copy-x", `${pointerX * -7}px`);
+        root.style.setProperty("--hero-copy-y", `${pointerY * -5 + scrollLift}px`);
+        root.style.setProperty("--hero-media-x", `${pointerX * 18}px`);
+        root.style.setProperty("--hero-media-y", `${pointerY * 12 - scrollLift * 0.28}px`);
+        root.style.setProperty("--hero-media-scale", `${1.006 + Math.min(0.018, Math.abs(pointerX) * 0.006 + Math.abs(pointerY) * 0.006)}`);
+      };
+
+      const requestHeroMotion = () => {
+        if (!raf) raf = requestAnimationFrame(applyHeroMotion);
+      };
+
+      hero.addEventListener("pointermove", (event) => {
+        const rect = hero.getBoundingClientRect();
+        pointerX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+        pointerY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+        requestHeroMotion();
+      });
+
+      hero.addEventListener("pointerleave", () => {
+        pointerX = 0;
+        pointerY = 0;
+        requestHeroMotion();
+      });
+
+      window.addEventListener("scroll", () => {
+        const rect = hero.getBoundingClientRect();
+        const progress = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height)));
+        scrollLift = progress * -28;
+        requestHeroMotion();
+      }, { passive: true });
+    }
 
     const progress = document.querySelector(".progress i");
     const updateProgress = () => {
@@ -1012,18 +1199,55 @@
     document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
     const filters = document.querySelectorAll(".filter button");
+    const filterBar = document.querySelector(".filter");
     const projects = document.querySelectorAll(".project");
+    const filterIndicator = document.createElement("span");
+    filterIndicator.className = "filter-indicator";
+    filterIndicator.setAttribute("aria-hidden", "true");
+    filterBar.append(filterIndicator);
+
+    const moveFilterIndicator = (button = document.querySelector(".filter button.active")) => {
+      if (!button) return;
+      const barRect = filterBar.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      filterIndicator.style.width = `${buttonRect.width}px`;
+      filterIndicator.style.transform = `translateX(${buttonRect.left - barRect.left + filterBar.scrollLeft}px)`;
+    };
+
+    moveFilterIndicator();
+    window.addEventListener("resize", () => moveFilterIndicator(), { passive: true });
+    filterBar.addEventListener("scroll", () => moveFilterIndicator(), { passive: true });
+
     filters.forEach((button) => {
       button.addEventListener("click", () => {
         filters.forEach((item) => item.classList.remove("active"));
         button.classList.add("active");
+        moveFilterIndicator(button);
         const filter = button.dataset.filter;
         projects.forEach((project) => {
           const show = filter === "all" || project.dataset.type === filter;
-          project.style.display = show ? "block" : "none";
+          project.hidden = !show;
+          if (show) requestAnimationFrame(() => project.classList.add("visible"));
         });
       });
     });
+
+    const motionWrap = document.querySelector(".motion-wrap");
+    if (motionWrap) {
+      const motionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          motionWrap.classList.toggle("in-view", entry.isIntersecting);
+          motionWrap.querySelectorAll("video").forEach((video) => {
+            if (entry.isIntersecting) {
+              video.play().catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        });
+      }, { threshold: 0.42 });
+      motionObserver.observe(motionWrap);
+    }
 
     const lightbox = document.querySelector(".lightbox");
     const closeBtn = document.querySelector(".close-btn");
@@ -1094,6 +1318,7 @@
       lightboxGroup = getLightboxGroup(button);
       lightboxIndex = Math.max(0, lightboxGroup.indexOf(button));
       renderLightbox();
+      document.body.classList.add("lightbox-open");
       lightbox.classList.add("open");
     };
 
@@ -1103,7 +1328,10 @@
 
     const closeLightbox = () => {
       lightbox.classList.remove("open");
-      lightbox.replaceChildren();
+      document.body.classList.remove("lightbox-open");
+      setTimeout(() => {
+        if (!lightbox.classList.contains("open")) lightbox.replaceChildren();
+      }, 260);
       lightboxGroup = [];
       lightboxIndex = 0;
     };
